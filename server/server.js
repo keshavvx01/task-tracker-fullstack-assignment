@@ -4,27 +4,33 @@
  *
  * Responsibilities:
  * - Load environment variables.
- * - Import the Express application.
- * - Start the HTTP server.
+ * - Connect to MongoDB.
+ * - Start the Express server.
  */
 
 require("dotenv").config();
 
 const app = require("./app");
+const connectDB = require("./config/db");
 
-// Server Port
 const PORT = process.env.PORT || 5000;
 
 /**
- * Purpose:
- * Start the Express server.
- *
- * Input:
- * PORT number.
- *
- * Output:
- * Starts the backend application.
+ * Start the application.
  */
-app.listen(PORT, () => {
-    console.log(`🚀 Server running on http://localhost:${PORT}`);
-});
+const startServer = async () => {
+    try {
+        // Connect to MongoDB first
+        await connectDB();
+
+        // Start Express server
+        app.listen(PORT, () => {
+            console.log(`🚀 Server running on http://localhost:${PORT}`);
+        });
+    } catch (error) {
+        console.error("❌ Server startup failed:", error.message);
+        process.exit(1);
+    }
+};
+
+startServer();
