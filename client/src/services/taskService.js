@@ -1,28 +1,15 @@
 import axios from "axios";
 
-/**
- * Axios instance
- * Base URL for all backend API requests.
- */
 const api = axios.create({
-    baseURL: import.meta.env.VITE_API_URL,
+  baseURL: "http://51.20.171.255/api",
 });
 
-/**
- * Fetch all tasks
- */
-export const getTasks = async () => {
-    return await api.get("/tasks");
-};
+export const getTasks = () => api.get("/tasks");
 
-export const createTask = async (task) => {
-    return await api.post("/tasks", task);
-};
-export const deleteTask = async (id) => {
-    return await api.delete(`/tasks/${id}`);
-};
-export const updateTask = async (id, task) => {
-    return await api.put(`/tasks/${id}`, task);
-};
+export const createTask = (task) => api.post("/tasks", task);
+
+export const updateTask = (id, task) => api.put(`/tasks/${id}`, task);
+
+export const deleteTask = (id) => api.delete(`/tasks/${id}`);
 
 export default api;
