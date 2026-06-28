@@ -22,9 +22,22 @@ function Dashboard() {
     const fetchTasks = async () => {
         try {
             const response = await getTasks();
-            setTasks(response.data.data);
+
+            console.log("API Response:", response.data);
+
+            if (
+                response.data &&
+                response.data.success &&
+                Array.isArray(response.data.data)
+            ) {
+                setTasks(response.data.data);
+            } else {
+                console.error("Unexpected API response:", response.data);
+                setTasks([]);
+            }
         } catch (error) {
             console.error("Failed to fetch tasks:", error);
+            setTasks([]);
         }
     };
 
@@ -41,7 +54,6 @@ function Dashboard() {
             }
 
             await fetchTasks();
-
         } catch (error) {
             console.error("Operation failed:", error);
         }
@@ -64,7 +76,7 @@ function Dashboard() {
     }, []);
 
     return (
-    <div className="dashboard">
+        <div className="dashboard">
             <h1>Task Tracker Dashboard</h1>
 
             <TaskForm
@@ -74,16 +86,20 @@ function Dashboard() {
 
             <hr />
 
-            <h2>Total Tasks: {tasks.length}</h2>
+            <h2>Total Tasks: {Array.isArray(tasks) ? tasks.length : 0}</h2>
 
-            {tasks.map((task) => (
-                <TaskCard
-                    key={task._id}
-                    task={task}
-                    onDelete={handleDeleteTask}
-                    onEdit={setEditingTask}
-                />
-            ))}
+            {Array.isArray(tasks) && tasks.length > 0 ? (
+                tasks.map((task) => (
+                    <TaskCard
+                        key={task._id}
+                        task={task}
+                        onDelete={handleDeleteTask}
+                        onEdit={setEditingTask}
+                    />
+                ))
+            ) : (
+                <p>No tasks found.</p>
+            )}
         </div>
     );
 }
