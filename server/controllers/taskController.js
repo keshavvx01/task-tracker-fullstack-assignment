@@ -46,7 +46,7 @@ const getAllTasks = async (req, res) => {
 };
 
 /**
- * Get a task by ID
+ * Get task by ID
  */
 const getTaskById = async (req, res) => {
     try {
@@ -72,8 +72,72 @@ const getTaskById = async (req, res) => {
     }
 };
 
+/**
+ * Update a task
+ */
+const updateTask = async (req, res) => {
+    try {
+        const task = await Task.findByIdAndUpdate(
+            req.params.id,
+            req.body,
+            {
+                new: true,
+                runValidators: true,
+            }
+        );
+
+        if (!task) {
+            return res.status(404).json({
+                success: false,
+                message: "Task not found",
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: "Task updated successfully.",
+            data: task,
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: error.message,
+        });
+    }
+};
+
+/**
+ * Delete a task
+ */
+const deleteTask = async (req, res) => {
+    try {
+        const task = await Task.findByIdAndDelete(req.params.id);
+
+        if (!task) {
+            return res.status(404).json({
+                success: false,
+                message: "Task not found",
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: "Task deleted successfully.",
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: error.message,
+        });
+    }
+};
+
 module.exports = {
     createTask,
     getAllTasks,
     getTaskById,
+    updateTask,
+    deleteTask,
 };
